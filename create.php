@@ -1,0 +1,163 @@
+<?php
+session_start();
+// Keamanan: Jika belum login, tendang balik ke halaman login
+if (!isset($_SESSION['username'])) {
+    header("Location: login.php");
+    exit;
+}
+include 'config.php';
+
+if (isset($_POST['submit'])) {
+    $nama = $_POST['nama_layanan'];
+    $kategori = $_POST['kategori'];
+    $status = $_POST['status'];
+
+    mysqli_query($conn, "INSERT INTO layanan (nama_layanan, kategori, status) VALUES ('$nama', '$kategori', '$status')");
+    header("Location: index.php");
+}
+?>
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tambah Layanan - VALORA Campus Hub</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* Pengaturan Dasar */
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body { font-family: 'Poppins', sans-serif; background-color: #fafafa; color: #262626; }
+
+        /* Navbar / Header Atas */
+        .navbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid #dbdbdb;
+            padding: 15px 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+        .navbar img { max-height: 40px; } /* Menyesuaikan ukuran logo di header */
+        .navbar-title { font-weight: 600; color: #737373; font-size: 0.95rem; }
+
+        /* Area Form (Container & Card) */
+        .container { max-width: 650px; margin: 50px auto; padding: 0 20px; }
+        .card {
+            background: #ffffff;
+            border: 1px solid #dbdbdb;
+            border-radius: 12px;
+            padding: 40px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+        }
+        
+        .card-header { margin-bottom: 30px; border-bottom: 1px solid #f0f0f0; padding-bottom: 20px; }
+        .card-header h2 { color: #3b823e; font-size: 1.6rem; font-weight: 700; margin-bottom: 5px; }
+        .card-header p { color: #737373; font-size: 0.95rem; }
+
+        /* Desain Kolom Input */
+        .form-group { margin-bottom: 25px; }
+        .form-group label { display: block; margin-bottom: 10px; font-weight: 600; font-size: 0.95rem; color: #444; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e1e5ee;
+            border-radius: 8px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 0.95rem;
+            background-color: #fcfcfc;
+            transition: all 0.3s ease;
+        }
+        .form-group input:focus, .form-group select:focus {
+            border-color: #4CAF50;
+            background-color: #fff;
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
+        }
+
+        /* Desain Tombol */
+        .btn-group { display: flex; gap: 15px; margin-top: 35px; }
+        .btn-submit {
+            flex: 1;
+            padding: 14px;
+            background: linear-gradient(to right, #4CAF50, #388E3C);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            font-family: 'Poppins', sans-serif;
+        }
+        .btn-submit:hover { transform: translateY(-2px); box-shadow: 0 6px 15px rgba(76, 175, 80, 0.25); }
+        
+        .btn-cancel {
+            flex: 1;
+            padding: 14px;
+            background-color: #ffffff;
+            color: #555;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            text-align: center;
+            text-decoration: none;
+            transition: all 0.2s;
+        }
+        .btn-cancel:hover { background-color: #f9f9f9; border-color: #d1d5db; color: #333; }
+
+        /* Responsif HP */
+        @media (max-width: 600px) {
+            .navbar { padding: 15px 20px; }
+            .card { padding: 25px; }
+            .btn-group { flex-direction: column-reverse; }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="navbar">
+        <img src="Gambar/Logo.png" alt="VALORA Logo">
+        <div class="navbar-title">Panel Admin</div>
+    </div>
+
+    <div class="container">
+        <div class="card">
+            <div class="card-header">
+                <h2>Tambah Layanan Baru</h2>
+                <p>Masukkan detail layanan yang akan tersedia di ekosistem kampus VALORA.</p>
+            </div>
+
+            <form method="POST" action="">
+                <div class="form-group">
+                    <label>Nama Layanan</label>
+                    <input type="text" name="nama_layanan" placeholder="Cth: Ruang Konseling B, Logistik Makanan" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label>Kategori Kebutuhan</label>
+                    <input type="text" name="kategori" placeholder="Cth: Kesehatan, Fasilitas, Psikologi" required autocomplete="off">
+                </div>
+                
+                <div class="form-group">
+                    <label>Status Operasional</label>
+                    <select name="status" required>
+                        <option value="" disabled selected>-- Pilih Status Saat Ini --</option>
+                        <option value="Tersedia">🟢 Tersedia / Aktif</option>
+                        <option value="Penuh">🟡 Penuh / Sedang Digunakan</option>
+                        <option value="Tutup">🔴 Tutup / Maintenance</option>
+                    </select>
+                </div>
+                
+                <div class="btn-group">
+                    <a href="index.php" class="btn-cancel">Batal</a>
+                    <button type="submit" name="submit" class="btn-submit">Simpan Layanan</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
